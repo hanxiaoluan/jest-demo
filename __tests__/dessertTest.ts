@@ -1,0 +1,54 @@
+// const dessert = require('../src/deseeert')
+
+// describe('test dessert feature', () => {
+//     test('enjoy the cake',()=>{
+//             const cake = new dessert('cake')
+
+//             expect(cake.enjoy()).toBe('Enjoy the cake')
+//     })
+// });
+
+import dessert from '../src/deseeert'
+
+import dessertCommentModule from '../src/dessertCommentModule'
+jest.mock('../src/dessertCommentModule.ts')
+
+describe('test dessert feature',()=>{
+    test('enjoy the cake',()=>{
+        const cake = new dessert('cake')
+        expect(cake.enjoy()).toBe('Enjoy the cake')
+    })
+})
+
+describe('test dessert feature with mock',()=>{
+    test('enjoy the cake with mock function',()=>{
+        // const dessertFactoryMock('cake')
+    })
+
+    test('enjoy the cake with mock return value',()=>{
+        const dessertFactoryMock = jest.fn(name=>new dessert(name))
+        const cake = new dessert('cake')
+        dessertFactoryMock.mockReturnValue(cake)
+        const triamisu = dessertFactoryMock('tiramisu')
+        expect(triamisu.enjoy()).toBe('Enjoy the cake')
+        expect(triamisu).toEqual(cake)
+        expect(dessertFactoryMock.mock.results[0].value).toEqual(cake)
+    })
+    test('comment the dessert with mock module',()=>{
+        const mockedDessert = dessertCommentModule as jest.Mocked<typeof dessertCommentModule>
+
+        mockedDessert.comments.mockReturnValue(['not bad'])
+        expect(mockedDessert.comments('cake is so good')).toEqual(['not bad'])
+        expect(dessert.comment).toEqual([])
+    })
+
+    test('comment the dessert with mock implementations',()=>{
+        const mockedDessert = dessertCommentModule as jest.Mocked<typeof dessertCommentModule>
+        mockedDessert.comments.mockImplementation((message:string)=>{
+            dessert.comments(message)
+            return ['not bad']
+        })
+        expect(mockedDessert.comments('cake is so good')).toEqual(['not bad'])
+        expect(dessert.comment).toEqual(['cake is so good'])
+    })
+})
